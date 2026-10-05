@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0f0c1b;
+            --purple-accent: #9d4edd;
+            --pink-accent: #ff85a1;
+            --gold-accent: #ffd166;
+            --text-light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Canvas de estrellas de fondo */
+        #starsCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 1100px;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* Encabezado */
+        .header-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 20px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .header-card h2 {
+            font-size: 1.3rem;
+            color: var(--gold-accent);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+        }
+
+        /* Rejilla de Collage estilo Polaroid */
+        .collage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .polaroid {
+            background: #ffffff;
+            padding: 15px 15px 40px 15px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .polaroid:nth-child(even) {
+            transform: rotate(2deg);
+        }
+
+        .polaroid:nth-child(odd) {
+            transform: rotate(-2deg);
+        }
+
+        .polaroid:hover {
+            transform: scale(1.06) rotate(0deg);
+            z-index: 10;
+            box-shadow: 0 15px 35px rgba(255, 133, 161, 0.4);
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .polaroid p {
+            font-family: 'Caveat', cursive;
+            color: #333;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* Mensaje Principal */
+        .main-message-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 850px;
+            margin-top: 10px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .main-message-card p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-light);
+            font-weight: 300;
+        }
+
+        /* Botón de Música */
+        .music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .music-btn:hover {
+            background: var(--purple-accent);
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starsCanvas"></canvas>
+
+    <div class="container">
+        <!-- Texto superior -->
+        <div class="header-card">
+            <h2>"keep it up, dont give up, i believe in u and ill always do, im not the only one who thinks that"</h2>
+        </div>
+
+        <!-- Galería Collage de Fotos -->
+        <div class="collage-grid">
+            <div class="polaroid">
+                <img src="6.jpg" alt="Playa">
+                <p>Abrazos frente al mar ✨</p>
+            </div>
+            <div class="polaroid">
+                <img src="7.jpg" alt="Piscina">
+                <p>Juntos en el sol ☀️</p>
+            </div>
+            <div class="polaroid">
+                <img src="10.jpg" alt="Sonrisa">
+                <p>Tu sonrisa tan bonita 🌸</p>
+            </div>
+            <div class="polaroid">
+                <img src="14.jpg" alt="Navidad">
+                <p>Feliz Navidad a tu lado 🎄</p>
+            </div>
+            <div class="polaroid">
+                <img src="15.jpg" alt="Espejo">
+                <p>Nuestros outfits ✨</p>
+            </div>
+            <div class="polaroid">
+                <img src="8.jpg" alt="Paseo">
+                <p>Momentos sencillos ❤️</p>
+            </div>
+            <div class="polaroid">
+                <img src="12.jpg" alt="Auto">
+                <p>Un saludo en el auto 🚗</p>
+            </div>
+            <div class="polaroid">
+                <img src="13.jpg" alt="Estilo">
+                <p>Paseando juntos 💜</p>
+            </div>
+            <div class="polaroid">
+                <img src="11.jpg" alt="Combinados">
+                <p>Mismo color, mismo estilo 👕</p>
+            </div>
+            <div class="polaroid">
+                <img src="9.jpg" alt="Dibujo">
+                <p>Tú y yo en caricatura 🎨</p>
+            </div>
+        </div>
+
+        <!-- Mensaje principal -->
+        <div class="main-message-card">
+            <p>"wish the world aprecciates you the way i do, ur very important and loved by everyone, especially for me even though we hadnt meet yet, i feel like this is not the first time we know in this world"</p>
+        </div>
+    </div>
+
+    <button class="music-btn" id="musicBtn">🎵 Reproducir Música Ambient</button>
+
+    <script>
+        // Estrellas de fondo animadas
+        const canvas = document.getElementById('starsCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        for (let i = 0; i < 120; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5,
+                alpha: Math.random(),
+                speed: Math.random() * 0.01 + 0.005
+            });
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha)})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // Efecto de chispas/destellos al hacer clic
+        window.addEventListener('click', (e) => {
+            for (let i = 0; i < 8; i++) {
+                const spark = document.createElement('div');
+                spark.style.position = 'fixed';
+                spark.style.left = e.clientX + 'px';
+                spark.style.top = e.clientY + 'px';
+                spark.style.width = '6px';
+                spark.style.height = '6px';
+                spark.style.backgroundColor = '#ffd166';
+                spark.style.borderRadius = '50%';
+                spark.style.pointerEvents = 'none';
+                spark.style.zIndex = '1000';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 40 + 10;
+                
+                spark.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 600,
+                    easing: 'ease-out'
+                });
+
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 600);
+            }
+        });
+
+        // Música ambiental con Tone.js
+        let synth, loop, isPlaying = false;
+        document.getElementById('musicBtn').addEventListener('click', async () => {
+            if (!isPlaying) {
+                await Tone.start();
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 1.5, decay: 2, sustain: 0.6, release: 2 }
+                }).toDestination();
+                synth.volume.value = -12;
+
+                const chords = [
+                    ["C4", "E4", "G4", "B4"],
+                    ["A3", "C4", "E4", "G4"],
+                    ["F3", "A3", "C4", "E4"],
+                    ["G3", "B3", "D4", "F#4"]
+                ];
+
+                let index = 0;
+                loop = new Tone.Loop(time => {
+                    synth.triggerAttackRelease(chords[index], "2m", time);
+                    index = (index + 1) % chords.length;
+                }, "2m").start(0);
+
+                Tone.Transport.bpm.value = 60;
+                Tone.Transport.start();
+
+                document.getElementById('musicBtn').textContent = "⏸️ Pausar Música";
+                isPlaying = true;
+            } else {
+                Tone.Transport.stop();
+                document.getElementById('musicBtn').textContent = "🎵 Reproducir Música Ambient";
+                isPlaying = false;
+            }
+        });
+    </script>
+</body>
+</html>
+
